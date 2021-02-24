@@ -1,0 +1,44 @@
+class Cell:
+    def __init__(self, nid: int) -> None:
+        self.nid: int = nid
+        self.__nets = []
+        self.text_id = None
+        self.rect_id = None
+        self.x = None
+        self.y = None
+
+    def __str__(self):
+        return str(self.nid)
+
+    def add_net(self, net) -> None:
+        self.__nets.append(net)
+
+    def center_coords(self, canvas):
+        """
+        :param canvas: canvas board
+        :return: center coords of the current site in the canvas
+        """
+        x1, y1, x2, y2 = canvas.coords(self.rect_id)  # get rect coords
+        return (x1 + x2) // 2, (y1 + y2) // 2
+
+    def set_text(self, canvas) -> None:
+        """
+        set the text, and place at the center of the rectangle
+        :param canvas: canvas board
+        """
+        if self.text_id is None:
+            x, y = self.center_coords(canvas)
+            self.text_id = canvas.create_text(
+                x, y, font=self.__get_font(canvas), text=str(self.nid)
+            )
+        else:
+            canvas.itemconfigure(self.text_id, text=str(self.nid))
+
+    def __get_font(self, canvas):
+        """
+        get the font, and its size is depends on the size of the rectangle
+        :param canvas: canvas
+        :return: font with an appropriate size
+        """
+        x1, _, x2, _ = canvas.coords(self.rect_id)
+        return "Helvetica", int((x2 - x1) / 3)
