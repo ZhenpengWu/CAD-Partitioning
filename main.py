@@ -26,6 +26,8 @@ if __name__ == "__main__":
 
     parser.add_argument("-i", "--infile", help="test input file")
 
+    parser.add_argument("-r", "--render", help="render the output")
+
     parser.add_argument(
         "-a",
         "--all",

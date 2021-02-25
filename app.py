@@ -2,13 +2,14 @@ import logging
 import os.path
 import tkinter.font as tk_font
 from math import sqrt, ceil
-from tkinter import ALL, Canvas, StringVar, Tk, E, N, S, W, filedialog
+from tkinter import ALL, Canvas, StringVar, Tk, E, N, S, W, filedialog, DISABLED, NORMAL
 from tkinter.ttk import Button, Frame, Label
 
 from model.circuit import Circuit
 from model.constants import LEFT, RIGHT, LEFT_COLOR, RIGHT_COLOR
 from partitioning import Partitioner
 from util.logging import init_logging
+from util.output import read
 
 
 def count(assigned):
@@ -39,7 +40,14 @@ class App:
             self.__init_gui()
             if args.infile:
                 self.__load_benchmark(args.infile)
+            if args.infile and args.render:
+                self.__render_result(args.render)
             self.root.mainloop()
+
+    def __render_result(self, file):
+        cost, assignment = read(file)
+        self.__update_canvas(assignment)
+        self.__update_cost(cost)
 
     def __test_benchmark(self, file):
         logging.info("opened benchmark: {}".format(file))
@@ -63,6 +71,8 @@ class App:
 
         self.__load_benchmark(filename)
 
+        self.root.nametowidget("btm.partition")["state"] = NORMAL
+
     def __load_benchmark(self, filename):
         """
         load the input file, initialize the canvas, update related info in the info frame
@@ -72,7 +82,7 @@ class App:
         logging.info("opened benchmark: {}".format(filename))
         self.circuit.parse_file(filename)
 
-        self.__update_info("info.benchmark", os.path.basename(filename))
+        self.__update_info("info.benchmark", self.circuit.benchmark)
         self.__update_info("info.cells", self.circuit.get_cells_size())
         self.__update_info("info.nets", self.circuit.get_nets_size())
 
@@ -80,6 +90,8 @@ class App:
         cost, assignment = self.partitioner.partition(self.circuit)
         self.__update_canvas(assignment)
         self.__update_cost(cost)
+
+        self.root.nametowidget("btm.partition")["state"] = DISABLED
 
     def __init_gui(self):
         """
@@ -117,6 +129,7 @@ class App:
             name="partition",
         )
         partition_button.grid(column=2, row=0, padx=5, pady=5)
+        partition_button["state"] = DISABLED
 
         # set up the info frame
         info_frame = Frame(self.root, name="info")

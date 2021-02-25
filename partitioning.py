@@ -3,6 +3,7 @@ import random
 
 from model.circuit import Circuit
 from model.constants import LEFT, RIGHT, NO_SET
+from util.output import output
 
 
 class Partitioner:
@@ -21,6 +22,8 @@ class Partitioner:
         n: int = circuit.get_cells_size()
         left_remain, right_remain = int(n / 2), n - int(n / 2)
         self.__partition(circuit, [NO_SET] * n, 0, left_remain, right_remain)
+
+        output(circuit.benchmark, self.best, self.result)
 
         return self.best, self.result
 

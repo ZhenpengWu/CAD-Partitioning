@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 from model.cell import Cell
@@ -9,12 +10,15 @@ class Circuit:
     def __init__(self) -> None:
         self.__cells: List[Cell] = []
         self.__nets: List[Net] = []
+        self.benchmark = None
 
     def parse_file(self, file) -> None:
         """
         parse the input file
         :param file: the input file
         """
+        self.benchmark = os.path.basename(file)
+
         with open(file, "r") as f:
             first = f.readline().strip().split()
 
