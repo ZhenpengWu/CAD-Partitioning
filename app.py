@@ -153,10 +153,14 @@ class App:
         initialize the canvas, with the given circuit
         """
         canvas = self.root.nametowidget("top.canvas")
-
         # clear the canvas
         canvas.delete(ALL)
 
+        left_cols, right_cols, size = self.__update_canvas_size(canvas, assignment)
+        self.__update_cells(canvas, assignment, size, left_cols, right_cols)
+        self.__update_nets(canvas)
+
+    def __update_canvas_size(self, canvas, assignment):
         left, right = count(assignment)
 
         left_cols, right_cols = ceil(sqrt(left)), ceil(sqrt(right))
@@ -174,45 +178,35 @@ class App:
         canvas_height = rows * size + (rows - 1) * 0.5 * size + 2 * offset_y
         canvas.config(width=canvas_width, height=canvas_height)
 
-        left_offset_x, right_offset_x = (
+        return left_cols, right_cols, size
+
+    def __update_cells(self, canvas, assignment, size, left_cols, right_cols):
+        left_index, right_index = 0, 0
+
+        left_offset_x, right_offset_x, offset_y = (
             size // 2,
             size // 2 + (left_cols + 1) * size,
+            size // 2,
         )
 
-        left_index, rihgt_index = 0, 0
         for i, val in enumerate(assignment):
-            if val == LEFT:  # left
-                self.__update_cell(
-                    i, left_index, left_cols, size, left_offset_x, offset_y, LEFT_COLOR
-                )
+            cell = self.circuit.get_cell(i)
+            if val == LEFT:
+                cell.x, cell.y = left_index % left_cols, int(left_index / left_cols)
+                x1, y1 = left_offset_x + cell.x * size, cell.y * size * 1.5 + offset_y
+                x2, y2 = x1 + size, y1 + size
+                cell.rect_id = canvas.create_rectangle(x1, y1, x2, y2, fill=LEFT_COLOR)
                 left_index += 1
-            else:  # right
-                self.__update_cell(
-                    i,
-                    rihgt_index,
-                    right_cols,
-                    size,
-                    right_offset_x,
-                    offset_y,
-                    RIGHT_COLOR,
-                )
-                rihgt_index += 1
+            else:
+                cell.x, cell.y = right_index % right_cols, int(right_index / right_cols)
+                x1, y1 = right_offset_x + cell.x * size, cell.y * size * 1.5 + offset_y
+                x2, y2 = x1 + size, y1 + size
+                cell.rect_id = canvas.create_rectangle(x1, y1, x2, y2, fill=RIGHT_COLOR)
+                right_index += 1
 
-        self.__update_nets()
+            cell.set_text(canvas)
 
-    def __update_cell(self, sid, i, cols, size, offset_x, offset_y, color):
-        canvas = self.root.nametowidget("top.canvas")
-
-        cell = self.circuit.get_cell(sid)
-        cell.x, cell.y = i % cols, int(i / cols)
-        x1, y1 = offset_x + cell.x * size, cell.y * size * 1.5 + offset_y
-        x2, y2 = x1 + size, y1 + size
-        cell.rect_id = canvas.create_rectangle(x1, y1, x2, y2, fill=color)
-        cell.set_text(canvas)
-
-    def __update_nets(self):
-        canvas = self.root.nametowidget("top.canvas")
-
+    def __update_nets(self, canvas):
         canvas.delete("netlist")
 
         for i in range(self.circuit.get_nets_size()):

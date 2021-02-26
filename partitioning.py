@@ -7,7 +7,6 @@ from util.output import output
 
 
 class Partitioner:
-
     def __init__(self):
         self.best = -1
         self.result = []
@@ -53,27 +52,37 @@ class Partitioner:
             if self.best < 0 or label < self.best:
                 self.result = assigned.copy()
                 self.best = label
-            logging.info("reach leaf end | label = {}, best = {}".format(label, self.best))
+            logging.info(
+                "reach leaf end | label = {}, best = {}".format(label, self.best)
+            )
         else:
             if self.best < 0 or label < self.best:
                 if left_reamin > 0:
                     assigned[nid] = LEFT  # add current cell into LEFT
-                    self.__partition(circuit, assigned, nid + 1, left_reamin - 1, right_remain)
+                    self.__partition(
+                        circuit, assigned, nid + 1, left_reamin - 1, right_remain
+                    )
                     assigned[nid] = NO_SET
                 else:
-                    self.pruned += (1 << (right_remain - 1))
+                    self.pruned += 1 << (right_remain - 1)
 
                 if right_remain > 0:
                     assigned[nid] = RIGHT  # add current cell into RIGHT
-                    self.__partition(circuit, assigned, nid + 1, left_reamin, right_remain - 1)
+                    self.__partition(
+                        circuit, assigned, nid + 1, left_reamin, right_remain - 1
+                    )
                     assigned[nid] = NO_SET
                 else:
-                    self.pruned += (1 << (left_reamin - 1))
+                    self.pruned += 1 << (left_reamin - 1)
             else:
-                self.pruned += (1 << (left_reamin + right_remain))
+                self.pruned += 1 << (left_reamin + right_remain)
 
             pruned_rate = self.pruned / (1 << circuit.get_cells_size())
-            logging.debug("pruned: {:.6%} | label = {}, best = {}".format(pruned_rate, label, self.best))
+            logging.debug(
+                "pruned: {:.6%} | label = {}, best = {}".format(
+                    pruned_rate, label, self.best
+                )
+            )
 
     @staticmethod
     def __calculate_label(circuit: Circuit, assigned):
@@ -83,7 +92,10 @@ class Partitioner:
             if assigned[net.get_source().nid] == NO_SET:
                 continue
             for sink in net.get_sinks():
-                if assigned[sink.nid] != NO_SET and assigned[net.get_source().nid] != assigned[sink.nid]:
+                if (
+                    assigned[sink.nid] != NO_SET
+                    and assigned[net.get_source().nid] != assigned[sink.nid]
+                ):
                     cut += 1
                     break
 
