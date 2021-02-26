@@ -160,4 +160,4 @@ dmypy.json
 cython_debug/
 
 
-outputs
+# outputs

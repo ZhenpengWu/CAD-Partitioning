@@ -72,6 +72,7 @@ class App:
         self.__load_benchmark(filename)
 
         self.root.nametowidget("btm.partition")["state"] = NORMAL
+        self.root.nametowidget("top.canvas").delete(ALL)
 
     def __load_benchmark(self, filename):
         """
@@ -173,15 +174,28 @@ class App:
         canvas_height = rows * size + (rows - 1) * 0.5 * size + 2 * offset_y
         canvas.config(width=canvas_width, height=canvas_height)
 
-        left_offset_x, right_offset_x = size // 2, size // 2 + (left_cols + 1) * size,
+        left_offset_x, right_offset_x = (
+            size // 2,
+            size // 2 + (left_cols + 1) * size,
+        )
 
         left_index, rihgt_index = 0, 0
         for i, val in enumerate(assignment):
             if val == LEFT:  # left
-                self.__update_cell(i, left_index, left_cols, size, left_offset_x, offset_y, LEFT_COLOR)
+                self.__update_cell(
+                    i, left_index, left_cols, size, left_offset_x, offset_y, LEFT_COLOR
+                )
                 left_index += 1
             else:  # right
-                self.__update_cell(i, rihgt_index, right_cols, size, right_offset_x, offset_y, RIGHT_COLOR)
+                self.__update_cell(
+                    i,
+                    rihgt_index,
+                    right_cols,
+                    size,
+                    right_offset_x,
+                    offset_y,
+                    RIGHT_COLOR,
+                )
                 rihgt_index += 1
 
         self.__update_nets()
@@ -207,7 +221,9 @@ class App:
             x1, y1 = source.center_coords(canvas)
             for sink in net.get_sinks():
                 x2, y2 = sink.center_coords(canvas)
-                canvas.create_line(x1, y1, x2, y2, fill=net.color, tags="netlist", width=1.5)
+                canvas.create_line(
+                    x1, y1, x2, y2, fill=net.color, tags="netlist", width=1.5
+                )
 
     def __update_cost(self, cost):
         self.__update_info("info.cost", cost)
