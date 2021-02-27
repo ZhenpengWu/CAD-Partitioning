@@ -26,6 +26,71 @@ class Partitioner:
 
         return self.best, self.result
 
+    def __partition(
+        self, circuit: Circuit, assigned, nid, label, left_reamin, right_remain
+    ):
+        if left_reamin == 0 and right_remain == 0:  # no node to assign
+            if self.best < 0 or label < self.best:
+                self.result = assigned.copy()
+                self.best = label
+            logging.info(
+                "pruned: {:.6%} | label = {}, best = {} | LEAF".format(
+                    self.__pruned_rate(circuit), label, self.best
+                )
+            )
+        else:
+            if self.best < 0 or label < self.best:
+                if left_reamin > 0:  # add current cell into LEFT
+                    new_label = label + self.__calculate_delta_label(
+                        circuit, nid, assigned, LEFT
+                    )
+                    self.__partition(
+                        circuit,
+                        assigned,
+                        nid + 1,
+                        new_label,
+                        left_reamin - 1,
+                        right_remain,
+                    )
+                    assigned[nid] = NOT_SET
+                else:
+                    self.pruned += 1 << (right_remain - 1)
+
+                if right_remain > 0:  # add current cell into RIGHT
+                    new_label = label + self.__calculate_delta_label(
+                        circuit, nid, assigned, RIGHT
+                    )
+                    self.__partition(
+                        circuit,
+                        assigned,
+                        nid + 1,
+                        new_label,
+                        left_reamin,
+                        right_remain - 1,
+                    )
+                    assigned[nid] = NOT_SET
+                else:
+                    self.pruned += 1 << (left_reamin - 1)
+            else:
+                self.pruned += 1 << (left_reamin + right_remain)
+
+            logging.debug(
+                "pruned: {:.6%} | label = {}, best = {}".format(
+                    self.__pruned_rate(circuit), label, self.best
+                )
+            )
+
+    def __pruned_rate(self, circuit):
+        return self.pruned / (1 << circuit.get_cells_size())
+
+    @staticmethod
+    def __calculate_delta_label(circuit, nid, assigned, value):
+        cell = circuit.get_cell(nid)
+        pre_label = cell.calculate_label(assigned)
+        assigned[nid] = value  # add current cell into value
+        post_label = cell.calculate_label(assigned)
+        return post_label - pre_label
+
     @staticmethod
     def __random_partition(circuit: Circuit):
         best = -1
@@ -45,52 +110,3 @@ class Partitioner:
                 result = assigned
 
         return result, best
-
-    def __partition(self, circuit: Circuit, assigned, nid, label, left_reamin, right_remain):
-        if left_reamin == 0 and right_remain == 0:  # no node to assign
-            if self.best < 0 or label < self.best:
-                self.result = assigned.copy()
-                self.best = label
-            logging.info(
-                "LEAF | pruned: {:.6%} | label = {}, best = {}".format(
-                    self.__pruned_rate(circuit), label, self.best
-                )
-            )
-        else:
-            if self.best < 0 or label < self.best:
-                if left_reamin > 0:  # add current cell into LEFT
-                    new_label = label + self.__calculate_delta_label(circuit, nid, assigned, LEFT)
-                    self.__partition(
-                        circuit, assigned, nid + 1, new_label, left_reamin - 1, right_remain
-                    )
-                    assigned[nid] = NOT_SET
-                else:
-                    self.pruned += 1 << (right_remain - 1)
-
-                if right_remain > 0:  # add current cell into RIGHT
-                    new_label = label + self.__calculate_delta_label(circuit, nid, assigned, RIGHT)
-                    self.__partition(
-                        circuit, assigned, nid + 1, new_label, left_reamin, right_remain - 1
-                    )
-                    assigned[nid] = NOT_SET
-                else:
-                    self.pruned += 1 << (left_reamin - 1)
-            else:
-                self.pruned += 1 << (left_reamin + right_remain)
-
-            logging.debug(
-                "pruned: {:.6%} | label = {}, best = {}".format(
-                    self.__pruned_rate(circuit), label, self.best
-                )
-            )
-
-    @staticmethod
-    def __calculate_delta_label(circuit, nid, assigned, value):
-        cell = circuit.get_cell(nid)
-        pre_label = cell.calculate_label(assigned)
-        assigned[nid] = value  # add current cell into LEFT
-        post_label = cell.calculate_label(assigned)
-        return post_label - pre_label
-
-    def __pruned_rate(self, circuit):
-        return self.pruned / (1 << circuit.get_cells_size())
