@@ -13,6 +13,9 @@ class Cell:
     def add_net(self, net) -> None:
         self.__nets.append(net)
 
+    def calculate_label(self, assigned):
+        return sum([net.calculate_label(assigned) for net in self.__nets])
+
     def center_coords(self, canvas):
         """
         :param canvas: canvas board
