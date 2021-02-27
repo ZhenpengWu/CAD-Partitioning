@@ -1,6 +1,7 @@
 from typing import List
 
 from model.cell import Cell
+from util.constants import NOT_SET
 
 
 class Net:
@@ -23,3 +24,14 @@ class Net:
         :return: the sinks, which are the cell except the first one
         """
         return self.__cells[1:]
+
+    def calculate_label(self, assigned) -> int:
+        if assigned[self.get_source().nid] == NOT_SET:
+            return 0
+        for sink in self.get_sinks():
+            if (
+                    assigned[sink.nid] != NOT_SET
+                    and assigned[self.get_source().nid] != assigned[sink.nid]
+            ):
+                return 1
+        return 0

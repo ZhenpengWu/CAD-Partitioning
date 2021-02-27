@@ -1,7 +1,7 @@
 import os
 
 
-def output(filename, cost, assignment):
+def write_result(filename, cost, assignment):
     if not os.path.exists("outputs"):
         os.makedirs("outputs")
 
@@ -11,7 +11,7 @@ def output(filename, cost, assignment):
             f.write(str(num) + "\n")
 
 
-def read(filename):
+def read_result(filename):
     if os.path.exists(filename):
         with open(filename, "r") as f:
             data = [int(x[:-1]) for x in f.readlines()]

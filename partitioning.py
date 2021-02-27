@@ -2,8 +2,8 @@ import logging
 import random
 
 from model.circuit import Circuit
-from model.constants import LEFT, RIGHT, NO_SET
-from util.output import output
+from util.constants import LEFT, RIGHT, NOT_SET
+from util.result import write_result
 
 
 class Partitioner:
@@ -20,13 +20,14 @@ class Partitioner:
 
         n: int = circuit.get_cells_size()
         left_remain, right_remain = int(n / 2), n - int(n / 2)
-        self.__partition(circuit, [NO_SET] * n, 0, left_remain, right_remain)
+        self.__partition(circuit, [NOT_SET] * n, 0, left_remain, right_remain)
 
-        output(circuit.benchmark, self.best, self.result)
+        write_result(circuit.benchmark, self.best, self.result)
 
         return self.best, self.result
 
-    def __random_partition(self, circuit: Circuit):
+    @staticmethod
+    def __random_partition(circuit: Circuit):
         best = -1
         result = []
         n: int = circuit.get_cells_size()
@@ -34,11 +35,11 @@ class Partitioner:
         for _ in range(n):
             cids = random.sample(range(n), n)
 
-            assigned = [NO_SET] * n
+            assigned = [NOT_SET] * n
             for i, v in enumerate(cids):
                 assigned[v] = LEFT if i < int(n / 2) else RIGHT
 
-            label = self.__calculate_label(circuit, assigned)
+            label = circuit.calculate_label(assigned)
             if best < 0 or label < best:
                 best = label
                 result = assigned
@@ -46,14 +47,16 @@ class Partitioner:
         return result, best
 
     def __partition(self, circuit: Circuit, assigned, nid, left_reamin, right_remain):
-        label = self.__calculate_label(circuit, assigned)
+        label = circuit.calculate_label(assigned)
 
         if left_reamin == 0 and right_remain == 0:  # no node to assign
             if self.best < 0 or label < self.best:
                 self.result = assigned.copy()
                 self.best = label
             logging.info(
-                "reach leaf end | label = {}, best = {}".format(label, self.best)
+                "LEAF | pruned: {:.6%} | label = {}, best = {}".format(
+                    self.__pruned_rate(circuit), label, self.best
+                )
             )
         else:
             if self.best < 0 or label < self.best:
@@ -62,7 +65,7 @@ class Partitioner:
                     self.__partition(
                         circuit, assigned, nid + 1, left_reamin - 1, right_remain
                     )
-                    assigned[nid] = NO_SET
+                    assigned[nid] = NOT_SET
                 else:
                     self.pruned += 1 << (right_remain - 1)
 
@@ -71,32 +74,17 @@ class Partitioner:
                     self.__partition(
                         circuit, assigned, nid + 1, left_reamin, right_remain - 1
                     )
-                    assigned[nid] = NO_SET
+                    assigned[nid] = NOT_SET
                 else:
                     self.pruned += 1 << (left_reamin - 1)
             else:
                 self.pruned += 1 << (left_reamin + right_remain)
 
-            pruned_rate = self.pruned / (1 << circuit.get_cells_size())
             logging.debug(
                 "pruned: {:.6%} | label = {}, best = {}".format(
-                    pruned_rate, label, self.best
+                    self.__pruned_rate(circuit), label, self.best
                 )
             )
 
-    @staticmethod
-    def __calculate_label(circuit: Circuit, assigned):
-        cut = 0
-        for nid in range(circuit.get_nets_size()):
-            net = circuit.get_net(nid)
-            if assigned[net.get_source().nid] == NO_SET:
-                continue
-            for sink in net.get_sinks():
-                if (
-                    assigned[sink.nid] != NO_SET
-                    and assigned[net.get_source().nid] != assigned[sink.nid]
-                ):
-                    cut += 1
-                    break
-
-        return cut
+    def __pruned_rate(self, circuit):
+        return self.pruned / (1 << circuit.get_cells_size())

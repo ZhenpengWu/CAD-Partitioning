@@ -12,6 +12,9 @@ class Circuit:
         self.__nets: List[Net] = []
         self.benchmark = None
 
+    def calculate_label(self, assigned):
+        return sum([net.calculate_label(assigned) for net in self.__nets])
+
     def parse_file(self, file) -> None:
         """
         parse the input file

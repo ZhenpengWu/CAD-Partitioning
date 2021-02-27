@@ -6,10 +6,10 @@ from tkinter import ALL, Canvas, StringVar, Tk, E, N, S, W, filedialog, DISABLED
 from tkinter.ttk import Button, Frame, Label
 
 from model.circuit import Circuit
-from model.constants import LEFT, RIGHT, LEFT_COLOR, RIGHT_COLOR
 from partitioning import Partitioner
+from util.constants import LEFT, RIGHT, LEFT_COLOR, RIGHT_COLOR
 from util.logging import init_logging
-from util.output import read
+from util.result import read_result
 
 
 def count(assigned):
@@ -45,7 +45,7 @@ class App:
             self.root.mainloop()
 
     def __render_result(self, file):
-        cost, assignment = read(file)
+        cost, assignment = read_result(file)
         self.__update_canvas(assignment)
         self.__update_cost(cost)
 
