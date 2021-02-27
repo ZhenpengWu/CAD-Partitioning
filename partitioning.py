@@ -13,7 +13,7 @@ class Partitioner:
         self.pruned = 0
 
     def partition(self, circuit: Circuit):
-        self.result, self.best = self.__random_partition(circuit)
+        self.__random_partition(circuit)
         self.pruned = 0
 
         logging.info("random partition result = {}".format(self.best))
@@ -84,17 +84,14 @@ class Partitioner:
         return self.pruned / (1 << circuit.get_cells_size())
 
     @staticmethod
-    def __calculate_delta_label(circuit, nid, assigned, value):
+    def __calculate_delta_label(circuit: Circuit, nid, assigned, value):
         cell = circuit.get_cell(nid)
         pre_label = cell.calculate_label(assigned)
         assigned[nid] = value  # add current cell into value
         post_label = cell.calculate_label(assigned)
         return post_label - pre_label
 
-    @staticmethod
-    def __random_partition(circuit: Circuit):
-        best = -1
-        result = []
+    def __random_partition(self, circuit: Circuit):
         n: int = circuit.get_cells_size()
 
         for _ in range(n):
@@ -105,8 +102,6 @@ class Partitioner:
                 assigned[v] = LEFT if i < int(n / 2) else RIGHT
 
             label = circuit.calculate_label(assigned)
-            if best < 0 or label < best:
-                best = label
-                result = assigned
-
-        return result, best
+            if self.best < 0 or label < self.best:
+                self.best = label
+                self.result = assigned

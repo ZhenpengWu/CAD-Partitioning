@@ -79,7 +79,6 @@ class App:
         load the input file, initialize the canvas, update related info in the info frame
         :param filename: the input file
         """
-
         logging.info("opened benchmark: {}".format(filename))
         self.circuit.parse_file(filename)
 
