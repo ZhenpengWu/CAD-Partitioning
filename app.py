@@ -45,6 +45,10 @@ class App:
             self.root.mainloop()
 
     def __render_result(self, file):
+        """
+        redner the output file
+        :param file: the ouput file
+        """
         cost, assignment = read_result(file)
         self.__update_canvas(assignment)
         self.__update_cost(cost)
@@ -87,6 +91,9 @@ class App:
         self.__update_info("info.nets", self.circuit.get_nets_size())
 
     def __partitioning(self):
+        """
+        called when "partition" is pressed, execture the branch and bound partitioning
+        """
         cost, assignment = self.partitioner.partition(self.circuit)
         self.__update_canvas(assignment)
         self.__update_cost(cost)
@@ -149,7 +156,7 @@ class App:
 
     def __update_canvas(self, assignment):
         """
-        initialize the canvas, with the given circuit
+        update the canvas, with the given circuit, and assignment
         """
         canvas = self.root.nametowidget("top.canvas")
         # clear the canvas

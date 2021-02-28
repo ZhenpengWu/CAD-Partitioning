@@ -14,6 +14,10 @@ class Cell:
         self.__nets.append(net)
 
     def calculate_label(self, assigned):
+        """
+        :param assigned:
+        :return: sum of the label for nets that include this cell
+        """
         return sum([net.calculate_label(assigned) for net in self.__nets])
 
     def center_coords(self, canvas):

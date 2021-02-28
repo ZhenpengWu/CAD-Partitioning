@@ -30,8 +30,8 @@ class Net:
             return 0
         for sink in self.get_sinks():
             if (
-                    assigned[sink.nid] != NOT_SET
-                    and assigned[self.get_source().nid] != assigned[sink.nid]
+                assigned[sink.nid] != NOT_SET
+                and assigned[self.get_source().nid] != assigned[sink.nid]
             ):
                 return 1
         return 0
