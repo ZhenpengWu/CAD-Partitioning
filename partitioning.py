@@ -27,12 +27,14 @@ class Partitioner:
         left_remain, right_remain = int(n / 2), n - int(n / 2)
         self.__partition(circuit, [NOT_SET] * n, 0, 0, left_remain, right_remain)
 
+        logging.info("final result = {}".format(self.best))
+
         write_result(circuit.benchmark, self.best, self.result)
 
         return self.best, self.result
 
     def __partition(
-            self, circuit: Circuit, assigned, nid, label, left_reamin, right_remain
+        self, circuit: Circuit, assigned, nid, label, left_reamin, right_remain
     ):
         """
         execute the recursive branch and bound partitioning
