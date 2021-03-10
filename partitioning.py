@@ -34,7 +34,7 @@ class Partitioner:
         return self.best, self.result
 
     def __partition(
-        self, circuit: Circuit, assigned, nid, label, left_reamin, right_remain
+        self, circuit: Circuit, assigned, nid, label, left_remain, right_remain
     ):
         """
         execute the recursive branch and bound partitioning
@@ -42,10 +42,10 @@ class Partitioner:
         :param assigned: the current assignment
         :param nid: the next cell
         :param label: the label of the current assignment
-        :param left_reamin: the number of empty spaces remaining in the left
+        :param left_remain: the number of empty spaces remaining in the left
         :param right_remain: the number of empty space remaining in the right
         """
-        if left_reamin == 0 and right_remain == 0:  # no node to assign
+        if left_remain == 0 and right_remain == 0:  # no node to assign
             if self.best < 0 or label < self.best:
                 self.result = assigned.copy()
                 self.best = label
@@ -56,7 +56,7 @@ class Partitioner:
             )
         else:
             if self.best < 0 or label < self.best:
-                if left_reamin > 0:  # add current cell into LEFT
+                if left_remain > 0:  # add current cell into LEFT
                     new_label = label + self.__calculate_delta_label(
                         circuit, nid, assigned, LEFT
                     )
@@ -65,7 +65,7 @@ class Partitioner:
                         assigned,
                         nid + 1,
                         new_label,
-                        left_reamin - 1,
+                        left_remain - 1,
                         right_remain,
                     )
                     assigned[nid] = NOT_SET
@@ -81,14 +81,14 @@ class Partitioner:
                         assigned,
                         nid + 1,
                         new_label,
-                        left_reamin,
+                        left_remain,
                         right_remain - 1,
                     )
                     assigned[nid] = NOT_SET
                 else:
-                    self.pruned += 1 << (left_reamin - 1)
+                    self.pruned += 1 << (left_remain - 1)
             else:
-                self.pruned += 1 << (left_reamin + right_remain)
+                self.pruned += 1 << (left_remain + right_remain)
 
             logging.debug(
                 "pruned: {:.6%} | label = {}, best = {}".format(

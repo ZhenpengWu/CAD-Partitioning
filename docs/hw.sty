@@ -1,0 +1,16 @@
+
+\usepackage{graphicx}
+
+\newcommand{\homework}[1]{\def\@homework{#1}}
+\newcommand{\stu}[1]{\def\@stu{#1}}
+\newcommand{\name}[1]{\def\@name{#1}}
+\newcommand{\type}[1]{\def\@type{#1}}
+
+\renewcommand\maketitle{
+\begin{flushleft}
+{\large
+\textsc{Name: \@name \hfill CPEN 513 \@type\ \@homework \hfill Student No.: \@stu}}\\
+\hrulefill
+\end{flushleft}}
+
+\def\ttquot@ttfont{\sf}

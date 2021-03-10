@@ -1,0 +1,136 @@
+\documentclass[11pt]{article}
+% !TEX root
+\input{defs}
+\usepackage{hw}
+
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+% \usepackage{dirtree}
+
+\usepackage{dirtree}
+\usepackage{booktabs}
+
+
+\homework{3}
+\stu{28125152}
+
+\name{Zhenpeng Wu}
+\type{Assignment}
+\graphicspath{ {images/} }
+
+\title{Assignment 3}
+
+\author{Zhenpeng Wu}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{description}
+
+\item[Branch and Bound Partitioning] \texttt{partitioning.py} contains all methods related to the branch and bound partitioning algorithm. 
+        First, before running the branch and bound partitioning algorithm, some random valid partitions are applied to the circuit, and get the best 
+        cut size so far. Then, assume the number of cells in the circuit is \texttt{n}, create two variables
+        \begin{align*}
+        \small
+            \texttt{left\_remain } &=\ \lfloor \texttt{n/2} \rfloor\\
+            \texttt{right\_remain } &= \texttt{ n - left\_remain},
+        \end{align*}
+        which indicate the number of empty spaces in the left and right partitions (If \texttt{n} is an odd number, the right partition will have one more cell than the left partition).  Then run recursive branch and bound partitioning,
+        \begin{align*}
+        \small
+            \texttt{\_\_partition(circuit, assigned, nid, label, left\_remain, right\_remain),}
+         \end{align*}
+        where \texttt{assigned} is the current assignment, and \texttt{nid} is the next node to assign. 
+        
+        For pruning the search space:
+        \begin{enumerate}
+            \item Whenever the current label is greater than or equal to the best result, it would be pruned. 
+            \item If the \texttt{left\_remain} is \(0\), it will not continue to search the left subtree, and it is the same argument for the \texttt{right\_remain}. It implies that it prunes left subtree or right subtree. 
+        \end{enumerate}
+     \texttt{self.pruned} is used to record the number of pruned leaves.
+
+\item[Efficiency] In order to make my implementation as efficient as possible, instead of calculating the label of the new assignment totally again, only     calculate the label changes of nets include the current node to assign (\texttt{nid}). Thus, 
+    \begin{align*}
+    \small
+        \texttt{new\_label = old\_label + (post\_label - pre\_label)}
+    \end{align*}
+
+\item[Source Code] All of source code and the report are hosted on GitHub (\url{https://github.com/ZhenpengWu/CAD-Partitioning.git}). A README file containing instructions on how to run the program is also included in the repository.
+    
+\item[Code Quality] 
+
+My code is well structured and designed by the object-oriented principle. All methods and class are well documented. 
+    
+\item[Graphics] 
+
+    \texttt{tkinter} is employed to implement the GUI. Some basic information of the input file will be listed in the right.
+\begin{figure}[H]
+    \centering
+
+        \includegraphics[width=0.8\textwidth]{cc.png}
+        \caption{cc}
+
+        \label{fig::cm162-random}
+\end{figure}
+
+\item[Table of Results] \mbox{}
+\begin{table}[H]
+    \centering
+\begin{tabular}{  C{10em} |  C{10em} |  C{10em}   } 
+\hline
+     \textbf{Benchmark} & \textbf{Cost} & \textbf{Run Time} \\
+     \hline
+     \hline
+     cc.txt & 4 & about 57 minutes \\
+     \hline
+     cm82a.txt & 1 & less than 1 second \\
+     \hline
+     cm138a.txt & 4 & about 1 second \\
+     \hline
+     cm150a.txt & 6 & about 9 minutes \\
+     \hline
+     cm162a.txt & 6 & about 2 minutes \\
+     \hline
+     con1.txt & 4 & less than 1 second \\
+     \hline
+     ugly8.txt & 8 & less than 1 second \\
+     \hline
+     ugly16.txt & 16 & about 2 seconds \\
+     \hline
+     z4ml.txt & 3 & about 2 seconds \\
+     \hline
+     twocm.txt & N/A & N/A \\
+    \hline
+
+\end{tabular}
+
+% \caption{}
+\end{table}
+
+All graphic results are shown in the \texttt{docs/images} directory.
+
+
+
+
+\end{description}
+
+
+% TODO: screenshots of stanley.infile and stdcell.infile.
+
+% \appendix
+
+% \bibliographystyle{unsrt}
+
+% \bibliography{sample.bib}
+
+% \nocite{*}
+
+
+\end{document}

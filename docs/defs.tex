@@ -1,0 +1,458 @@
+\usepackage{palatino}   % Pretty Font
+\usepackage{amsmath}    % American Mathematical Society (AMS) commands
+\usepackage{amsthm}     % AMS Theorem commands
+\usepackage{amssymb}    % AMS Symbols
+\usepackage{mathtools}  % for multlined and friends.
+\usepackage{semantic}   % Tools for typesetting PL semantics
+\usepackage{fancyhdr}   % header/footer for each page
+\usepackage[margin=1in]{geometry}   % Give me reasonable margins
+\usepackage{braket}     % Easy angle-bracket notation
+\usepackage{mathpartir} % Used to typeset blocks of inference rules
+%\usepackage[usenames,dvipsnames]{color}      % for colors
+\usepackage[usenames]{color}      % for colors
+\usepackage{rotating} % for sidewaysfigure
+\usepackage{proof}
+\usepackage{hyperref}
+\usepackage{datetime}
+\usepackage{pdflscape}
+\usepackage{fancyvrb} % to use \verb in footnotes
+\usepackage{enumitem} %% for resuming enumerations
+\usepackage{stmaryrd}
+\usepackage{natbib}
+\usepackage{wasysym} % for frownie
+
+\usepackage{fullpage}
+\usepackage{framed}
+\usepackage{dsfont}
+\usepackage{latexsym}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{aliascnt}
+% \usepackage{pstricks}
+% \usepackage{pst-all}
+% \usepackage{pstricks-add}
+% \usepackage{pst-plot}
+\usepackage{graphicx}
+% \usepackage{subfig}
+% \usepackage{enumerate}
+% \usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{subcaption}
+\usepackage{bold-extra}
+
+% Errors
+\newcommand{\rbsf}[1]{\textsf{\color{red}#1}}
+\reservestyle{\errlang}{\rbsf}
+
+\errlang{mismatch,underflow,unbound}
+
+
+% Finite partial map
+\newcommand{\finto}{\stackrel{\text{fin}}{\rightharpoonup}}
+\newcommand{\pto}{\rightharpoonup}
+\newcommand{\len}[1]{\lvert {#1} \rvert}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{inlemma}{Inversion Lemma}
+
+\theoremstyle{definition}
+\newtheorem{example}{Example}
+\newtheorem{exercise}{Exercise}
+
+% When a property is true by the Induction Hypothesis...
+\newcommand{\ih}[1]{\stackrel{\text{I.H.}}{#1}}
+
+
+\theoremstyle{remark}
+\newtheorem*{case}{Case}
+\newtheorem*{note}{Note}
+\newtheorem*{notation}{Notation}
+\newtheorem*{solution}{Solution}
+\newenvironment{subcase}[1][]{
+  \mbox{}\\\mbox{}\quad
+  \begin{minipage}{1.0\linewidth}
+    \begin{case}[#1]
+    }{
+    \end{case}
+  \end{minipage}
+}
+
+% The following helps fix having too much vertical space when writing
+% predicates or functions applied to derivation trees
+\newcommand{\sarray}[1]{
+{\begin{array}[c]{@{}l@{}} #1
+  \end{array}}}
+
+\newcommand{\fdeduce}[2]{\ensuremath{#2 :: #1}}
+
+%% Random math macros
+
+% Set Theory
+\newcommand{\tuple}[1]{\braket{#1}}
+\newcommand{\setint}{\ensuremath{\cap}}
+\newcommand{\setdiff}{\mathrel{\backslash}}
+\newcommand{\union}{\ensuremath{\cup}}   % the set union symbol
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}} % the set of integers
+\newcommand{\N}{\ensuremath{\mathbb{N}}} % the set of naturals
+\newcommand{\B}{\ensuremath{\mathbb{B}}} % the set of booleans
+\newcommand{\Pow}{\ensuremath{\mathcal{P}}} % The powerset
+
+% Logic
+\newcommand{\ltrue}{{\top}}
+\newcommand{\lfalse}{{\bot}}
+\newcommand{\lequiv}{\mathop{{\equiv}}}
+\newcommand{\rorv}[1]{(\lor{\rverif}{#1})}
+\newcommand{\roru}[2]{(\lor{\ruse}^{{#1},{#2}})}
+\newcommand{\randu}[1]{(\land{\ruse}{#1})}
+\newcommand{\ruv}{({\downarrow\uparrow})}
+\newcommand{\randv}{(\land{\rverif})}
+\newcommand{\J}{\mathcal{J}}
+\newcommand{\rtruev}{(\ltrue{\rverif})}
+\newcommand{\rfalseu}{(\lfalse{\ruse})}
+\newcommand{\rimpliesv}[1]{({\supset}{\uparrow}^{#1})}
+\newcommand{\rimpliesu}{({\supset}{\juse})}
+
+
+%RG: rename to \juse and \jverif
+\newcommand{\juse}{\ensuremath{\mathop{\downarrow}}}
+\newcommand{\jverif}{\ensuremath{\mathop{\uparrow}}}
+\newcommand{\ruse}{\ensuremath{\mathop{\downarrow}}}
+\newcommand{\rverif}{\ensuremath{\mathop{\uparrow}}}
+
+\newcommand{\luse}{\mbox{$\downarrow$}}
+\newcommand{\lverif}{\mbox{$\uparrow$}}
+
+\newcommand{\jtrue}{\textbf{true}}
+\newcommand{\judge}[1]{\textbf{#1}}
+
+
+
+
+%% Comments
+\newcommand{\comment}[2]{{\color{red}[{\sc #1:} \textsf{#2}]}}
+%\renewcommand{\comment}[2]{}
+\newcommand{\ron}[1]{\comment{RG}{#1}}
+
+
+%%
+%% Macros for syntax definitions
+%%
+\newcommand{\mvar}[1]{\ensuremath{\mathit{#1}}}
+\newcommand{\seq}[1]{\ensuremath{\overline{#1}}}
+\newcommand{\hole}{\square}
+\newcommand{\nsubst}[3]{{[#2 \Mapsto #1]#3}}
+\newcommand{\ansubst}[3]{{\underline{[#2 \Mapsto #1]}#3}}
+
+%ron Redefine \subst
+\newcommand{\subst}[3]{\ensuremath{[#1/#2]#3}}
+\newcommand{\asubst}[3]{\ensuremath{\underline{[#1/#2]}#3}}
+\newcommand{\remap}[3]{\ensuremath{#1[#2 \mapsto #3]}}
+
+
+%%
+%% inferbox: an environment for typesetting a group of inference rules
+%%
+\newenvironment{inferbox}[1][\textwidth]
+  {\begin{minipage}{#1}\begin{mathpar}}
+  {\end{mathpar}\end{minipage}}
+
+
+%% buinfer: build an inference tree bottom up, rather than top-down.  Sometimes
+%% this is easier to do, especially when building complicated trees
+
+\newcommand{\binference}[3][]{\inference[#1]{#3}{#2}}
+%\newcommand{\binference}[3][]{\infer[\text{#1}]{#2}{#3}}
+
+% silent inference - ignore the labels
+\newcommand{\sinference}[3][]{\inference[]{#2}{#3}}
+
+% Derivation-related macros
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\ddd}{\raisebox{0.2em}[1.1em]{$\vdots$}}
+
+
+%% block - used to indent code or create newlines of math stuff.
+\newenvironment{block}[1][t]
+  {\begin{array}[#1]{@{}l@{}}}
+  {\end{array}}
+
+% Block, or any array[t]/array[c]/array[b] does not play well with 
+% stretchy parens or brackets.  Use this instead.
+% It protects everything in another array
+\newenvironment{roundbrack}{\left(\begin{array}{@{}l@{}}}
+  {\end{array}\right)}
+
+
+% mark something in gray outline
+\definecolor{lightgray}{gray}{0.80}
+\newcommand{\Gbox}[1]{\colorbox{lightgray}{$#1$}}
+\newcommand{\gbox}[1]{{\setlength{\fboxsep}{0pt}\colorbox{lightgray}{#1}}}
+
+%% Math ligatures (thanks to the semantic package) that make it
+%% easier to typeset math using readable LaTeX text.
+\mathlig{|-->}{\longmapsto}
+\mathlig{[]}{\square}
+\mathlig{||}{\mathrel{\color{black}\Downarrow}}
+\mathlig{!!}{{\color{blue}!}}
+\mathlig{;;}{\mbsf{;}}
+\mathlig{::==}{\mathbin{\color{blue}\texttt{\bf \upshape :=}}}
+%\mathlig{::==}{\mbsf{:=}}
+\mathlig{|}{\mid}
+\mathlig{..}{{\color{blue}.}}
+\mathlig{@-}{\mathbin{\color{blue}\texttt{\bf \upshape -}}}
+\mathlig{++}{\mathbin{\color{blue}\texttt{\bf \upshape +}}}
+\mathlig{**}{\mathbin{\color{blue}\mathbf{*}}}
+\mathlig{==}{\mathbin{\color{blue}\texttt{\bf \upshape =}}}
+\mathlig{,,}{{\color{blue},}}
+\mathlig{[[}{\mbsf{[}}
+\mathlig{]]}{\mbsf{]}}
+\mathlig{@:}{\mbsf{:}}
+\mathlig{@(}{{\color{blue}\texttt{\bf \upshape (}}}
+\mathlig{@)}{{\color{blue}\texttt{\bf \upshape )}}}
+%\mathlig{@(}{\mbsf{(}}
+%\mathlig{)@}{\mbsf{)}}
+\newcommand{\tbrack}[1]{{\triangleleft#1\triangleright}}
+\newcommand{\thunk}[1]{\tbrack{\hspace{2pt}#1\hspace{2pt}}}
+\newcommand{\closure}{\texttt{\textbf{\#<closure>}}}
+
+\newcommand{\unit}{{\color{blue}\texttt{\bf ()}}}
+
+
+% Use smallcaps for the names of object language sets.
+\newcommand{\oblset}[1]{\textsc{#1}}
+
+% Some common Sets
+
+\newcommand{\Faulty}{\oblset{Faulty}}
+\newcommand{\Config}{\oblset{Config}}
+\newcommand{\Outcome}{\oblset{Outcome}}
+\newcommand{\TreeSet}{\oblset{Tree}} % because sometimes we redefine \Tree
+\newcommand{\Tree}{\oblset{Tree}}
+\newcommand{\Deriv}{\oblset{Deriv}}
+\newcommand{\Term}{\oblset{Term}}
+\newcommand{\Value}{\oblset{Value}}
+\newcommand{\Var}{\oblset{Var}}
+\newcommand{\RPgm}{\oblset{RPgm}} % "runtime" program
+\newcommand{\Pgm}{\oblset{Pgm}}
+\newcommand{\Obs}{\oblset{Obs}}
+\newcommand{\Frame}{\oblset{Frame}}
+\newcommand{\ECtxt}{\oblset{ECtxt}}
+\newcommand{\Ctxt}{\oblset{Ctxt}}
+\newcommand{\Redex}{\oblset{Redex}}
+\newcommand{\Type}{\oblset{Type}}
+
+% Some custom notations for the metalanguage
+\reservestyle{\mtlang}{\textit}
+\renewcommand{\eval}{\mathit{eval}}
+\newcommand{\dom}{\mathit{dom}}
+\newcommand{\cod}{\mathit{cod}}
+\newcommand{\unload}{\mathit{unload}}
+\newcommand{\observe}{\mathit{observe}}
+\newcommand{\dvgbs}{\Uparrow}
+\newcommand{\dvgss}{\stackrel{\infty}{-->}}
+
+% Some custom notations for object language stuff
+% Typeset object language notation in blue with sans serif font
+\newcommand{\blue}[1]{{{\color{blue}#1}}}
+\newcommand{\tbsf}[1]{\textsf{\color{blue}#1}}
+\newcommand{\mbsf}[1]{\mathsf{\color{blue}#1}}
+\newcommand{\ol}[1]{\ensuremath{\mbsf{#1}}}
+\reservestyle{\oblang}{\tbsf}
+
+
+
+%
+% Languages:
+%
+
+% Logic Object Language
+% Formalized
+\newcommand{\band}{\mathbin{\mbsf{\wedge}}}
+\newcommand{\bimplies}{\mathbin{\mbsf{\supset}}}
+\newcommand{\btrue}{\mbsf{\top}}
+\newcommand{\bor}{\mathbin{\mbsf{\vee}}}
+\newcommand{\bnot}{\mathop{\mbsf{\lnot}}}
+\newcommand{\bfalse}{\mbsf{\bot}}
+\newcommand{\bequiv}{\mathop{\mbsf{\equiv}}}
+
+
+
+% Booleans
+\newcommand{\Bool}{\oblset{Bool}}
+\oblang{if-then-else[if],true,false,if[if\;],then[\;then\;],else[\;else\;]
+}
+
+
+% Arithmetic
+% RG: Why do I have both Num and Nat?
+\newcommand{\Num}{\oblset{Num}}
+\oblang{z,succ,pred,zero?}
+\newcommand{\nv}{\mathit{nv}}
+
+
+% IMP <: Booleans
+\newcommand{\AExp}{\oblset{AExp}}
+\newcommand{\BExp}{\oblset{BExp}}
+\newcommand{\Com}{\oblset{Com}}
+\newcommand{\Env}{\oblset{Env}}
+\newcommand{\DO}{\oblset{DO}}
+\newcommand{\Store}{\oblset{Store}}
+\newcommand{\SO}{\oblset{SO}}
+\newcommand{\Loc}{\oblset{Loc}}
+\newcommand{\PLOC}{\Pow(\Loc)}
+\newcommand{\ACfg}{\oblset{ACfg}}
+\newcommand{\BCfg}{\oblset{BCfg}}
+\newcommand{\CCfg}{\oblset{CCfg}}
+
+\oblang{while[while\;],do[\;do\;],skip}
+
+\newcommand{\X}{\mbsf{X}}
+\newcommand{\Y}{\mbsf{Y}}
+\newcommand{\ZZ}{\mbsf{Z}}
+
+\newcommand{\bv}{\mathit{bv}}
+\newcommand{\bsa}{\Downarrow_{\AExp}}
+\newcommand{\bsb}{\Downarrow_{\BExp}}
+\newcommand{\bsc}{\Downarrow_{\Com}}
+
+\newenvironment{whileblock}[2][t]
+  {\begin{block}[#1]\<while> \mbsf{#2} \<do>\\
+      \quad\begin{block} \color{blue}}
+    {\end{block}\end{block}}
+
+
+% Doesn't work because of the end-environment part (grr...)
+% \newenvironment{doblock}[2][t]
+%   {\begin{block}[#1]\<do>\\
+%       \quad\begin{block} \color{blue}}
+%     {\end{block} \<while> \mbsf{#2} \end{block}}
+
+
+
+% Procedures (Lambda Calculus)
+\newcommand{\blambda}{\ensuremath{{\color{blue}\lambda}}}
+\newcommand{\FV}{\mathit{FV}}
+\newcommand{\BV}{\mathit{BV}}
+\newcommand{\Vars}{\mathit{Vars}}
+\newcommand{\Locs}{\mathit{Locs}}
+\oblang{var,apply,procedure}
+\oblang{tlet[let],let[let\;],dlet[dlet\;],in[\;in\;],nin[in\;]}
+
+\newcommand{\w}{\mbsf{w}}
+\newcommand{\x}{\mbsf{x}}
+\newcommand{\y}{\mbsf{y}}
+\newcommand{\z}{\mbsf{z}}
+
+\newenvironment{letblock}[2][t]
+  {\begin{block}[#1]\<let> \mbsf{#2} \\
+      \<nin>\begin{block} \color{blue}}
+    {\end{block}\end{block}}
+
+
+% Recursion
+\oblang{fix[fix\;],rec[rec\;]}
+
+\newenvironment{fixblock}[2][t]
+  {\begin{block}[#1]\<fix> \mbsf{#2}. \\
+      \quad\begin{block} \color{blue}}
+    {\end{block}\end{block}}
+
+
+% Unit
+\oblang{unit,Unit}
+
+% References
+\oblang{ref[ref\;]}
+
+% Environments and Closures
+\newcommand{\clo}[2]{\mbsf{\llparenthesis}#1\mbsf{,\,}#2\mbsf{\rrparenthesis}}
+
+
+% Exceptions
+\oblang{raise[raise\;],try[try\;],handle[\;handle\;]}
+
+% Continations
+% use \braket{E} for continuation values
+\oblang{letcc[let/cc\;],throw[throw\;]}
+
+\newenvironment{letccblock}[2][t]
+  {\begin{block}[#1]\<letcc> \mbsf{#2} \\
+      \<nin>\begin{block} \color{blue}}
+    {\end{block}\end{block}}
+
+
+% Pairs
+\newcommand{\pr}[2]{\mbsf{(}#1\mbsf{,\,}#2\mbsf{)}}
+\oblang{fst[fst\;],snd[snd\;]}
+
+
+% Sums
+\oblang{inr,inl,case[case\;],of[\;of]}
+
+\newcommand{\tcase}[5]{
+  \begin{block}
+    \<case> #1 \<of> \\
+    \quad
+    \begin{block}
+      \<inl>\;#2  .. #3 \\
+      \<inr>\;#4  .. #5 \\
+    \end{block}
+  \end{block}
+}
+
+
+% Recursive Types
+\oblang{fold,unfold}
+
+% Errors
+\newcommand{\err}{\mathit{err}}
+\newcommand{\Err}{\oblset{Error}}
+\errlang{error}
+
+
+
+%
+% Other stuff
+%
+
+% CPS translation function
+\newcommand{\cps}[1]{|[ #1 |]}
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
+
+% Algorithms
+\newcommand{\matroid}{\mathcal M}
+\newcommand{\classp}{\mathsf {P}}
+\newcommand{\classnp}{\mathsf {NP}}
+\newcommand{\preduce}{\leq_{\classp}}
+\newcommand{\ALGO}{\mathcal{A}}
+\newcommand{\alg}{\mathcal{A}}
+\newcommand{\opt}{\textsc{OPT}}
+\newcommand{\eps}{\epsilon}
+
+\let\oldemptyset\emptyset
+\let\emptyset\varnothing
+
+\algrenewcommand\algorithmicrequire{{\sc Input:}}
+\algrenewcommand\algorithmicensure{{\sc Output:}}
+\algdef{SE}[SUBALG]{Indent}{EndIndent}{}{\algorithmicend\ }%
+\algtext*{Indent}
+\algtext*{EndIndent}
+
+\renewcommand\proofname{\textsc{Proof.}}
